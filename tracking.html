@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tracking Pengiriman SITTA — Lacak status Delivery Order bahan ajar Universitas Terbuka secara real-time.">
+  <title>Tracking Pengiriman — SITTA Universitas Terbuka</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ── LOADING OVERLAY ────────────────────────────────── -->
+  <div id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <p class="loading-teks">Mencari data pengiriman...</p>
+  </div>
+
+  <!-- ── TOAST CONTAINER ────────────────────────────────── -->
+  <div id="toastContainer"></div>
+
+  <!-- ── MODAL: KONFIRMASI LOGOUT ───────────────────────── -->
+  <div id="modalKonfirmasiLogout" class="modal-overlay">
+    <div class="modal-box modal-tengah">
+      <span class="modal-ikon">🚪</span>
+      <h2 class="modal-judul">Keluar dari SITTA?</h2>
+      <p class="modal-teks">Anda akan keluar dari sesi ini.</p>
+      <div class="modal-footer">
+        <button id="btnBatalLogout" class="btn btn-sekunder">Batal</button>
+        <button id="btnKonfirmasiLogout" class="btn btn-bahaya">Ya, Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       NAVIGASI
+       ══════════════════════════════════════════════════════ -->
+  <nav class="navbar">
+    <a href="dashboard.html" class="navbar-brand">
+      <div class="navbar-logo">UT</div>
+      <div class="navbar-nama">SITTA <span>UT</span></div>
+    </a>
+
+    <button id="btnMobileMenu" class="btn-mobile-menu" aria-label="Menu">☰</button>
+
+    <div class="nav-links" id="navLinks">
+      <a href="stok.html" class="nav-link">📚 Informasi Bahan Ajar</a>
+      <a href="tracking.html" class="nav-link aktif">🚚 Tracking Pengiriman</a>
+
+      <div class="nav-dropdown">
+        <button id="btnLaporan" class="nav-link" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;">
+          📊 Laporan ▾
+        </button>
+        <div id="dropdownLaporan" class="dropdown-menu">
+          <a href="#" class="dropdown-item" onclick="tampilkanToast('Halaman ini sedang dalam pengembangan.','info'); return false;">
+            📈 Monitoring Progress DO Bahan Ajar
+          </a>
+          <a href="#" class="dropdown-item" onclick="tampilkanToast('Halaman ini sedang dalam pengembangan.','info'); return false;">
+            📋 Rekap Bahan Ajar
+          </a>
+        </div>
+      </div>
+
+      <a href="dashboard.html" class="nav-link">🕐 Histori Transaksi</a>
+    </div>
+
+    <div class="navbar-user">
+      <div class="user-info">
+        <p class="user-nama" id="namaUserNav">—</p>
+        <p class="user-role" id="roleUserNav">—</p>
+      </div>
+      <div class="user-avatar" id="avatarUser">—</div>
+      <button class="btn-logout" id="btnLogout">🚪 Keluar</button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════
+       HERO TRACKING — Form Pencarian
+       ══════════════════════════════════════════════════════ -->
+  <section class="tracking-hero">
+    <div class="tracking-hero-inner">
+      <h1>🚚 Tracking Pengiriman DO</h1>
+      <p>Masukkan Nomor Delivery Order untuk melacak status pengiriman bahan ajar Anda.</p>
+
+      <form id="formTracking">
+        <div class="form-tracking-box">
+          <input
+            type="text"
+            id="inputNomorDO"
+            class="form-input"
+            placeholder="Masukkan Nomor DO (contoh: 2023001234)"
+            required
+            autocomplete="off"
+          >
+          <button type="submit" class="btn btn-emas">🔍 Cari</button>
+        </div>
+      </form>
+
+      <div class="contoh-do-list">
+        <span class="contoh-do-label">Coba nomor DO:</span>
+        <span class="contoh-do" data-do="2023001234">2023001234</span>
+        <span class="contoh-do" data-do="2023005678">2023005678</span>
+        <span class="contoh-do" data-do="2024009999">2024009999</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       AREA HASIL TRACKING
+       ══════════════════════════════════════════════════════ -->
+  <main class="konten-utama">
+
+    <!-- PESAN TIDAK DITEMUKAN -->
+    <div id="pesanTidakDitemukan">
+      <div class="pesan-tidak-ditemukan-ikon">🔍</div>
+      <p class="pesan-tidak-ditemukan-judul">Nomor DO Tidak Ditemukan</p>
+      <p class="pesan-tidak-ditemukan-teks">
+        Periksa kembali nomor Delivery Order yang Anda masukkan.<br>
+        Gunakan salah satu contoh nomor DO di atas untuk mencoba.
+      </p>
+    </div>
+
+    <!-- HASIL TRACKING (disembunyikan hingga ada data) -->
+    <div id="hasilTracking">
+
+      <!-- Info header DO -->
+      <div class="kartu" style="margin-bottom:20px;">
+        <div class="kartu-header">
+          <div>
+            <div style="font-size:0.75rem; color:var(--teks-halus); font-weight:700; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px;">
+              Nomor Delivery Order
+            </div>
+            <h2 class="kartu-judul" style="font-size:1.3rem;">
+              DO #<span id="trackNomorDO">—</span>
+            </h2>
+          </div>
+          <span id="trackBadgeStatus" class="badge-status-besar status-transit">—</span>
+        </div>
+
+        <div class="kartu-body">
+          <!-- Grid info utama -->
+          <div class="track-info-grid">
+            <div class="track-info-item">
+              <p class="track-info-label">👤 Nama Penerima</p>
+              <p class="track-info-nilai" id="trackNama">—</p>
+            </div>
+            <div class="track-info-item">
+              <p class="track-info-label">📍 Tujuan Pengiriman</p>
+              <p class="track-info-nilai" id="trackTujuan">—</p>
+            </div>
+            <div class="track-info-item">
+              <p class="track-info-label">🚛 Ekspedisi</p>
+              <p class="track-info-nilai" id="trackEkspedisi">—</p>
+            </div>
+            <div class="track-info-item">
+              <p class="track-info-label">📅 Tanggal Kirim</p>
+              <p class="track-info-nilai" id="trackTanggal">—</p>
+            </div>
+            <div class="track-info-item">
+              <p class="track-info-label">📦 Kode Paket</p>
+              <p class="track-info-nilai" id="trackPaket">—</p>
+            </div>
+            <div class="track-info-item">
+              <p class="track-info-label">💰 Total Pembayaran</p>
+              <p class="track-info-nilai" id="trackTotal" style="color:var(--ut-biru-muda); font-weight:700;">—</p>
+            </div>
+          </div>
+
+          <!-- Status pengiriman -->
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:28px;">
+            <span style="font-size:0.85rem; font-weight:600; color:var(--teks-sekunder);">Status Saat Ini:</span>
+            <span id="trackStatus" class="track-status-label status-transit">—</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="progress-area">
+            <div class="progress-header">
+              <span>Progress Pengiriman</span>
+              <span id="progressPersen">0%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline Perjalanan Paket -->
+      <div class="kartu">
+        <div class="kartu-header">
+          <h3 class="kartu-judul">📍 Riwayat Perjalanan Paket</h3>
+        </div>
+        <div class="kartu-body">
+          <div class="timeline" id="timelinePerjalanan">
+            <!-- Diisi oleh JavaScript -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /#hasilTracking -->
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login ke SITTA - Sistem Pemesanan Bahan Ajar Universitas Terbuka. Kelola pemesanan modul dan bahan ajar secara digital.">
+  <title>Login — SITTA Universitas Terbuka</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ── LOADING OVERLAY ───────────────────────────────── -->
+  <div id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <p class="loading-teks">Memverifikasi akun...</p>
+  </div>
+
+  <!-- ── TOAST CONTAINER ───────────────────────────────── -->
+  <div id="toastContainer"></div>
+
+  <!-- ── MODAL: LOGIN GAGAL ─────────────────────────────── -->
+  <div id="modalLoginGagal" class="modal-overlay">
+    <div class="modal-box modal-tengah">
+      <span class="modal-ikon">❌</span>
+      <h2 class="modal-judul">Login Gagal</h2>
+      <p class="modal-teks">
+        Email / password yang Anda masukkan <strong>salah</strong>.<br>
+        Periksa kembali dan coba lagi.
+      </p>
+      <div class="modal-footer">
+        <button id="btnTutupLoginGagal" class="btn btn-primer btn-penuh">Coba Lagi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: LUPA PASSWORD ───────────────────────────── -->
+  <div id="modalLupaPassword" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-judul">🔑 Lupa Password?</h2>
+        <button class="btn-tutup-modal link-teks" data-modal="modalLupaPassword">✕</button>
+      </div>
+      <p class="modal-teks">
+        Hubungi administrator SITTA untuk mereset password Anda. Sertakan email terdaftar saat menghubungi admin.
+      </p>
+      <div class="form-group">
+        <label class="form-label" for="emailReset">Email Terdaftar</label>
+        <input type="email" id="emailReset" class="form-input" placeholder="contoh@ut.ac.id">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-sekunder btn-tutup-modal" data-modal="modalLupaPassword">Batal</button>
+        <button class="btn btn-primer" onclick="tampilkanToast('Permintaan reset password telah dikirim ke email admin.','success'); tutupModal('modalLupaPassword')">Kirim Permintaan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: DAFTAR ──────────────────────────────────── -->
+  <div id="modalDaftar" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-judul">📝 Pendaftaran Akun</h2>
+        <button class="btn-tutup-modal link-teks" data-modal="modalDaftar">✕</button>
+      </div>
+      <p class="modal-teks">
+        Pendaftaran akun SITTA dilakukan oleh Administrator. Silakan hubungi admin pusat Universitas Terbuka untuk mendapatkan akses.
+      </p>
+      <div style="background:#EFF6FF; border-radius:12px; padding:16px; margin-bottom:16px;">
+        <p style="font-size:0.85rem; color:#1E3A8A; font-weight:500; margin-bottom:6px;">📞 Kontak Administrator</p>
+        <p style="font-size:0.85rem; color:#1E40AF;">Email: <strong>admin-sitta@ut.ac.id</strong></p>
+        <p style="font-size:0.85rem; color:#1E40AF;">Telp: <strong>(021) 1800-123</strong></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primer btn-penuh btn-tutup-modal" data-modal="modalDaftar">Mengerti</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       KONTEN HALAMAN LOGIN
+       ══════════════════════════════════════════════════════ -->
+  <div class="login-page">
+    <div class="login-kontainer">
+
+      <!-- PANEL KIRI — Branding -->
+      <div class="login-panel-kiri">
+        <div>
+          <div class="login-logo-area">
+            <div class="login-logo">UT</div>
+            <div class="login-nama-sistem">
+              SITTA
+              <small>Sistem Pemesanan Bahan Ajar</small>
+            </div>
+          </div>
+
+          <div class="login-hero-teks">
+            <h1>Kelola <span>Bahan Ajar</span> dengan Mudah &amp; Efisien</h1>
+            <p>
+              Platform digital terpadu untuk manajemen pemesanan, distribusi, dan
+              tracking bahan ajar Universitas Terbuka.
+            </p>
+            <ul class="login-fitur-list">
+              <li>
+                <span class="fitur-ikon">📦</span>
+                Pemesanan &amp; Distribusi Bahan Ajar
+              </li>
+              <li>
+                <span class="fitur-ikon">🚚</span>
+                Tracking Pengiriman Real-time
+              </li>
+              <li>
+                <span class="fitur-ikon">📊</span>
+                Laporan &amp; Monitoring Stok
+              </li>
+              <li>
+                <span class="fitur-ikon">🏛️</span>
+                Terintegrasi dengan UPBJJ-UT
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p class="login-footer-teks">
+          © 2025 Universitas Terbuka — SITTA v2.0
+        </p>
+      </div>
+
+      <!-- PANEL KANAN — Form Login -->
+      <div class="login-panel-kanan">
+        <div class="login-form-header">
+          <h2>Selamat Datang 👋</h2>
+          <p>Masuk ke akun SITTA Anda untuk melanjutkan.</p>
+        </div>
+
+        <form id="formLogin" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="email">Alamat Email</label>
+            <input
+              type="email"
+              id="email"
+              class="form-input"
+              placeholder="email@ut.ac.id"
+              required
+              autocomplete="email"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <div class="input-group">
+              <input
+                type="password"
+                id="password"
+                class="form-input"
+                placeholder="Masukkan password Anda"
+                required
+                autocomplete="current-password"
+              >
+              <button type="button" id="togglePassword" class="input-ikon-kanan" title="Tampilkan/sembunyikan password">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="btnLogin" class="btn btn-primer btn-penuh" style="margin-top:8px;">
+            Masuk ke SITTA
+          </button>
+        </form>
+
+        <div class="login-actions-bawah">
+          <button id="btnLupaPassword" class="link-teks">Lupa Password?</button>
+          <button id="btnDaftar" class="link-teks">Daftar Akun Baru</button>
+        </div>
+
+        <!-- Info akun demo untuk pengujian -->
+        <div class="demo-akun">
+          <p class="demo-akun-judul">🧪 Akun Demo untuk Pengujian</p>
+          <div class="demo-akun-item">
+            <span>Admin SITTA</span>
+            <code>admin@ut.ac.id / admin123</code>
+          </div>
+          <div class="demo-akun-item">
+            <span>UPBJJ Jakarta</span>
+            <code>rina@ut.ac.id / rina123</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

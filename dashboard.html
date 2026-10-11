@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard SITTA - Ringkasan dan menu navigasi utama sistem pemesanan bahan ajar Universitas Terbuka.">
+  <title>Dashboard — SITTA Universitas Terbuka</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ── LOADING OVERLAY ────────────────────────────────── -->
+  <div id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <p class="loading-teks">Memuat...</p>
+  </div>
+
+  <!-- ── TOAST CONTAINER ────────────────────────────────── -->
+  <div id="toastContainer"></div>
+
+  <!-- ── MODAL: KONFIRMASI LOGOUT ───────────────────────── -->
+  <div id="modalKonfirmasiLogout" class="modal-overlay">
+    <div class="modal-box modal-tengah">
+      <span class="modal-ikon">🚪</span>
+      <h2 class="modal-judul">Keluar dari SITTA?</h2>
+      <p class="modal-teks">Anda akan keluar dari sesi ini. Data yang belum disimpan akan hilang.</p>
+      <div class="modal-footer">
+        <button id="btnBatalLogout" class="btn btn-sekunder">Batal</button>
+        <button id="btnKonfirmasiLogout" class="btn btn-bahaya">Ya, Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       NAVIGASI
+       ══════════════════════════════════════════════════════ -->
+  <nav class="navbar">
+    <a href="dashboard.html" class="navbar-brand">
+      <div class="navbar-logo">UT</div>
+      <div class="navbar-nama">SITTA <span>UT</span></div>
+    </a>
+
+    <button id="btnMobileMenu" class="btn-mobile-menu" aria-label="Menu">☰</button>
+
+    <div class="nav-links" id="navLinks">
+      <a href="stok.html" class="nav-link">📚 Informasi Bahan Ajar</a>
+      <a href="tracking.html" class="nav-link">🚚 Tracking Pengiriman</a>
+
+      <!-- Dropdown Laporan -->
+      <div class="nav-dropdown">
+        <button id="btnLaporan" class="nav-link" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;">
+          📊 Laporan ▾
+        </button>
+        <div id="dropdownLaporan" class="dropdown-menu">
+          <a href="#" class="dropdown-item" onclick="tampilkanToast('Halaman Monitoring Progress DO sedang dalam pengembangan.','info'); return false;">
+            📈 Monitoring Progress DO Bahan Ajar
+          </a>
+          <a href="#" class="dropdown-item" onclick="tampilkanToast('Halaman Rekap Bahan Ajar sedang dalam pengembangan.','info'); return false;">
+            📋 Rekap Bahan Ajar
+          </a>
+        </div>
+      </div>
+
+      <a href="dashboard.html" class="nav-link">🕐 Histori Transaksi</a>
+    </div>
+
+    <div class="navbar-user">
+      <div class="user-info">
+        <p class="user-nama" id="namaUserNav">—</p>
+        <p class="user-role" id="roleUserNav">—</p>
+      </div>
+      <div class="user-avatar" id="avatarUser">—</div>
+      <button class="btn-logout" id="btnLogout">🚪 Keluar</button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════
+       HERO / BANNER GREETING
+       ══════════════════════════════════════════════════════ -->
+  <section class="hero-dashboard">
+    <div class="hero-inner">
+      <div class="hero-teks">
+        <h1>
+          <span id="greetingTeks">☀️ Selamat Siang,</span><br>
+          <span id="namaGreeting">Pengguna</span>!
+        </h1>
+        <p>Selamat datang di SITTA. Kelola pemesanan bahan ajar Anda dari satu platform.</p>
+      </div>
+      <div class="jam-widget">
+        <div class="jam-angka" id="jamSekarang">--:--:--</div>
+        <div class="jam-label">Waktu Lokal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       KONTEN UTAMA
+       ══════════════════════════════════════════════════════ -->
+  <main class="konten-utama">
+
+    <!-- KARTU STATISTIK -->
+    <div class="grid-stat fade-in" style="animation-delay:0.1s;">
+      <div class="kartu-stat">
+        <div class="stat-ikon biru">📦</div>
+        <div>
+          <div class="stat-angka">1.248</div>
+          <div class="stat-label">Total Pesanan</div>
+        </div>
+      </div>
+      <div class="kartu-stat">
+        <div class="stat-ikon hijau">✅</div>
+        <div>
+          <div class="stat-angka">1.089</div>
+          <div class="stat-label">Pesanan Selesai</div>
+        </div>
+      </div>
+      <div class="kartu-stat">
+        <div class="stat-ikon emas">🚚</div>
+        <div>
+          <div class="stat-angka">124</div>
+          <div class="stat-label">Dalam Pengiriman</div>
+        </div>
+      </div>
+      <div class="kartu-stat">
+        <div class="stat-ikon ungu">📚</div>
+        <div>
+          <div class="stat-angka">35</div>
+          <div class="stat-label">Jenis Bahan Ajar</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENU CEPAT -->
+    <div class="halaman-header">
+      <h2 class="halaman-judul">Menu Utama</h2>
+      <p class="halaman-subjudul">Akses fitur-fitur SITTA dengan cepat</p>
+    </div>
+
+    <div class="grid-menu fade-in" style="animation-delay:0.2s;">
+      <a href="stok.html" class="menu-kartu">
+        <div class="menu-kartu-ikon" style="background:#EFF6FF;">📚</div>
+        <h3>Informasi Bahan Ajar</h3>
+        <p>Lihat dan kelola data stok bahan ajar yang tersedia di seluruh UPBJJ.</p>
+        <span class="menu-kartu-panah">→</span>
+      </a>
+
+      <a href="tracking.html" class="menu-kartu">
+        <div class="menu-kartu-ikon" style="background:#ECFDF5;">🚚</div>
+        <h3>Tracking Pengiriman</h3>
+        <p>Lacak status pengiriman Delivery Order secara real-time berdasarkan nomor DO.</p>
+        <span class="menu-kartu-panah">→</span>
+      </a>
+
+      <a href="#" class="menu-kartu" onclick="tampilkanToast('Halaman Monitoring Progress DO sedang dalam pengembangan.','info'); return false;">
+        <div class="menu-kartu-ikon" style="background:#FFFBEB;">📈</div>
+        <h3>Monitoring Progress DO</h3>
+        <p>Pantau progress setiap Delivery Order bahan ajar dari gudang ke penerima.</p>
+        <span class="menu-kartu-panah">→</span>
+      </a>
+
+      <a href="#" class="menu-kartu" onclick="tampilkanToast('Halaman Rekap Bahan Ajar sedang dalam pengembangan.','info'); return false;">
+        <div class="menu-kartu-ikon" style="background:#F5F3FF;">📋</div>
+        <h3>Rekap Bahan Ajar</h3>
+        <p>Laporan rekapitulasi penerimaan dan distribusi bahan ajar per periode.</p>
+        <span class="menu-kartu-panah">→</span>
+      </a>
+
+      <a href="#" class="menu-kartu" onclick="tampilkanToast('Halaman Histori Transaksi sedang dalam pengembangan.','info'); return false;">
+        <div class="menu-kartu-ikon" style="background:#FFF1F2;">🕐</div>
+        <h3>Histori Transaksi</h3>
+        <p>Riwayat lengkap semua transaksi pemesanan bahan ajar yang pernah dilakukan.</p>
+        <span class="menu-kartu-panah">→</span>
+      </a>
+
+      <a href="#" class="menu-kartu" onclick="tampilkanToast('Halaman Pengaturan sedang dalam pengembangan.','info'); return false;">
+        <div class="menu-kartu-ikon" style="background:#F0FDF4;">⚙️</div>
+        <h3>Pengaturan Akun</h3>
+        <p>Kelola profil, preferensi notifikasi, dan keamanan akun SITTA Anda.</p>
+        <span class="menu-kartu-panah">→</span>
+      </a>
+    </div>
+
+    <!-- HISTORI TRANSAKSI TERBARU -->
+    <div class="kartu fade-in" style="animation-delay:0.3s;">
+      <div class="kartu-header">
+        <h2 class="kartu-judul">🕐 Histori Transaksi Bahan Ajar</h2>
+        <span style="font-size:0.8rem; color:var(--teks-halus);">4 transaksi terakhir</span>
+      </div>
+      <div class="tabel-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID Transaksi</th>
+              <th>Tanggal</th>
+              <th>Pemesan</th>
+              <th>Lokasi</th>
+              <th class="center">Item</th>
+              <th>Total</th>
+              <th class="center">Status</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyHistori">
+            <!-- Diisi oleh JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

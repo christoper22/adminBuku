@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Informasi Stok Bahan Ajar SITTA — Data ketersediaan bahan ajar di seluruh UPBJJ Universitas Terbuka.">
+  <title>Informasi Stok Bahan Ajar — SITTA Universitas Terbuka</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ── LOADING OVERLAY ────────────────────────────────── -->
+  <div id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <p class="loading-teks">Memuat...</p>
+  </div>
+
+  <!-- ── TOAST CONTAINER ────────────────────────────────── -->
+  <div id="toastContainer"></div>
+
+  <!-- ── MODAL: KONFIRMASI LOGOUT ───────────────────────── -->
+  <div id="modalKonfirmasiLogout" class="modal-overlay">
+    <div class="modal-box modal-tengah">
+      <span class="modal-ikon">🚪</span>
+      <h2 class="modal-judul">Keluar dari SITTA?</h2>
+      <p class="modal-teks">Anda akan keluar dari sesi ini.</p>
+      <div class="modal-footer">
+        <button id="btnBatalLogout" class="btn btn-sekunder">Batal</button>
+        <button id="btnKonfirmasiLogout" class="btn btn-bahaya">Ya, Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: TAMBAH STOK BAHAN AJAR ─────────────────── -->
+  <div id="modalTambahStok" class="modal-overlay">
+    <div class="modal-box" style="max-width:540px;">
+      <div class="modal-header">
+        <h2 class="modal-judul">➕ Tambah Stok Bahan Ajar</h2>
+        <button class="link-teks btn-tutup-modal" data-modal="modalTambahStok">✕</button>
+      </div>
+      <p style="font-size:0.85rem; color:var(--teks-sekunder); margin-bottom:20px;">
+        Isi formulir di bawah untuk menambahkan data stok bahan ajar baru ke dalam tabel.
+      </p>
+
+      <form id="formTambahStok" novalidate>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="inputKodeBarang">Kode Barang <span style="color:red">*</span></label>
+            <input type="text" id="inputKodeBarang" class="form-input" placeholder="cth: EKMA4216" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inputLokasi">Kode Lokasi <span style="color:red">*</span></label>
+            <input type="text" id="inputLokasi" class="form-input" placeholder="cth: 0JKT01" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputNamaBarang">Nama Bahan Ajar <span style="color:red">*</span></label>
+          <input type="text" id="inputNamaBarang" class="form-input" placeholder="Nama lengkap bahan ajar" required>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="inputKategori">Kategori <span style="color:red">*</span></label>
+            <select id="inputKategori" class="form-select" required>
+              <option value="">-- Pilih Kategori --</option>
+              <option value="Ilmu Sosial">Ilmu Sosial</option>
+              <option value="Ekonomi & Bisnis">Ekonomi & Bisnis</option>
+              <option value="Manajemen">Manajemen</option>
+              <option value="Hukum">Hukum</option>
+              <option value="Sains & Teknologi">Sains & Teknologi</option>
+              <option value="Pendidikan">Pendidikan</option>
+              <option value="Umum">Umum</option>
+              <option value="Kesehatan">Kesehatan</option>
+              <option value="Teknik">Teknik</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inputJenis">Jenis Barang <span style="color:red">*</span></label>
+            <select id="inputJenis" class="form-select" required>
+              <option value="">-- Pilih Jenis --</option>
+              <option value="BMP">BMP (Buku Materi Pokok)</option>
+              <option value="Suplemen">Suplemen</option>
+              <option value="Panduan">Panduan</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="inputEdisi">Edisi <span style="color:red">*</span></label>
+            <input type="text" id="inputEdisi" class="form-input" placeholder="cth: 3" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inputStok">Jumlah Stok <span style="color:red">*</span></label>
+            <input type="number" id="inputStok" class="form-input" placeholder="cth: 500" min="0" required>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sekunder btn-tutup-modal" data-modal="modalTambahStok">Batal</button>
+          <button type="submit" class="btn btn-primer">➕ Tambahkan Data</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       NAVIGASI
+       ══════════════════════════════════════════════════════ -->
+  <nav class="navbar">
+    <a href="dashboard.html" class="navbar-brand">
+      <div class="navbar-logo">UT</div>
+      <div class="navbar-nama">SITTA <span>UT</span></div>
+    </a>
+
+    <button id="btnMobileMenu" class="btn-mobile-menu" aria-label="Menu">☰</button>
+
+    <div class="nav-links" id="navLinks">
+      <a href="stok.html" class="nav-link aktif">📚 Informasi Bahan Ajar</a>
+      <a href="tracking.html" class="nav-link">🚚 Tracking Pengiriman</a>
+
+      <div class="nav-dropdown">
+        <button id="btnLaporan" class="nav-link" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;">
+          📊 Laporan ▾
+        </button>
+        <div id="dropdownLaporan" class="dropdown-menu">
+          <a href="#" class="dropdown-item" onclick="tampilkanToast('Halaman ini sedang dalam pengembangan.','info'); return false;">
+            📈 Monitoring Progress DO Bahan Ajar
+          </a>
+          <a href="#" class="dropdown-item" onclick="tampilkanToast('Halaman ini sedang dalam pengembangan.','info'); return false;">
+            📋 Rekap Bahan Ajar
+          </a>
+        </div>
+      </div>
+
+      <a href="dashboard.html" class="nav-link">🕐 Histori Transaksi</a>
+    </div>
+
+    <div class="navbar-user">
+      <div class="user-info">
+        <p class="user-nama" id="namaUserNav">—</p>
+        <p class="user-role" id="roleUserNav">—</p>
+      </div>
+      <div class="user-avatar" id="avatarUser">—</div>
+      <button class="btn-logout" id="btnLogout">🚪 Keluar</button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════
+       KONTEN UTAMA
+       ══════════════════════════════════════════════════════ -->
+  <main class="konten-utama">
+
+    <!-- HEADER HALAMAN -->
+    <div class="halaman-header fade-in">
+      <h1 class="halaman-judul">📚 Informasi Stok Bahan Ajar</h1>
+      <p class="halaman-subjudul">Data ketersediaan bahan ajar secara dinamis. Data bersumber dari variabel JavaScript.</p>
+    </div>
+
+    <!-- KARTU STATISTIK STOK -->
+    <div class="grid-stat fade-in" style="animation-delay:0.1s; margin-bottom:24px;">
+      <div class="kartu-stat">
+        <div class="stat-ikon biru">📚</div>
+        <div>
+          <div class="stat-angka" id="statTotalItem">0</div>
+          <div class="stat-label">Jenis Bahan Ajar</div>
+        </div>
+      </div>
+      <div class="kartu-stat">
+        <div class="stat-ikon hijau">📦</div>
+        <div>
+          <div class="stat-angka" id="statTotalStok">0</div>
+          <div class="stat-label">Total Stok Tersedia</div>
+        </div>
+      </div>
+      <div class="kartu-stat">
+        <div class="stat-ikon emas">⚠️</div>
+        <div>
+          <div class="stat-angka" id="statStokRendah">0</div>
+          <div class="stat-label">Stok Kritis (&lt;100)</div>
+        </div>
+      </div>
+      <div class="kartu-stat">
+        <div class="stat-ikon ungu">🏛️</div>
+        <div>
+          <div class="stat-angka">8</div>
+          <div class="stat-label">UPBJJ Aktif</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABEL STOK -->
+    <div class="kartu fade-in" style="animation-delay:0.2s;">
+      <div class="kartu-header">
+        <h2 class="kartu-judul">📋 Daftar Stok Bahan Ajar</h2>
+        <span class="stok-counter" id="jumlahItemDitampilkan">0 item</span>
+      </div>
+      <div class="kartu-body" style="padding-bottom:0;">
+        <div class="stok-toolbar" style="margin-bottom:16px;">
+          <div class="stok-cari-wrapper">
+            <span class="stok-cari-ikon">🔍</span>
+            <input
+              type="text"
+              id="inputCariStok"
+              class="form-input"
+              placeholder="Cari nama, kode, atau kategori..."
+            >
+          </div>
+          <button id="btnTambahStok" class="btn btn-primer btn-sm">
+            ➕ Tambah Stok
+          </button>
+        </div>
+      </div>
+
+      <div class="tabel-wrapper" style="border-top:1px solid var(--border); border-radius:0 0 var(--radius-lg) var(--radius-lg);">
+        <table>
+          <thead>
+            <tr>
+              <th>Kode Barang</th>
+              <th>Nama Bahan Ajar</th>
+              <th class="center">Kategori</th>
+              <th class="center">Jenis</th>
+              <th class="center">Edisi</th>
+              <th class="center">Jumlah Stok</th>
+              <th class="center">Status Stok</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyStok">
+            <!-- Diisi dinamis oleh JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- KETERANGAN BADGE -->
+    <div class="kartu fade-in" style="animation-delay:0.3s; margin-top:16px;">
+      <div class="kartu-body" style="padding:16px 24px;">
+        <p style="font-size:0.78rem; font-weight:700; color:var(--teks-halus); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:12px;">Keterangan Status Stok</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+          <span class="badge badge-stok-aman">Aman</span>
+          <span style="font-size:0.8rem; color:var(--teks-sekunder);">Stok ≥ 300</span>
+          <span class="badge badge-stok-cukup" style="margin-left:16px;">Cukup</span>
+          <span style="font-size:0.8rem; color:var(--teks-sekunder);">100 ≤ Stok &lt; 300</span>
+          <span class="badge badge-stok-rendah" style="margin-left:16px;">Rendah</span>
+          <span style="font-size:0.8rem; color:var(--teks-sekunder);">0 &lt; Stok &lt; 100</span>
+          <span class="badge badge-stok-habis" style="margin-left:16px;">Habis</span>
+          <span style="font-size:0.8rem; color:var(--teks-sekunder);">Stok = 0</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
